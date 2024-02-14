@@ -20,7 +20,6 @@ class PostController extends Controller
     public function create(){
         return view ('posts.create');
     }
-
     public function store(Request $request){
         $request->validate([
             'title' =>'required',
@@ -31,7 +30,39 @@ class PostController extends Controller
             'title' => $request->title,
             'description' => $request->description,
         ]);
-        return redirect()->route('post.view');
+        return redirect()->route('post.view')->with('success', 'Post added successfully');
     }
+
+    public function edit($postid){
+        $post = Post::find($postid);
+        if(!$post){
+            return redirect()->route('post.view')->with('error', 'Post not found');
+        }
+        return view('posts.edit',[
+            'post' =>  $post,
+        ]);
+
+    }
+
+    public function update(Request $request,$postid){
+        $post = Post::find($postid);
+        if(!$post){
+            return redirect()->route('post.view')->with('error', 'Post not found');
+        }
+        $request->validate([
+            'title' =>'required',
+            'description' =>'required',
+        ]);
+
+        $post->update([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+        ]);
+
+        return redirect()->route('post.view')->with('success', 'Post edited successfully');
+
+
+    }
+
 
 }

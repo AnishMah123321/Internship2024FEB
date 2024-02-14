@@ -6,19 +6,19 @@
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
-    <form method="POST" action="{{ route('post.create') }}">
+    <form method="POST" action="{{ route('post.update' , ['postid' => $post->id]) }}">
         @csrf
-
+        @method('PUT')
         <!-- Title -->
         <div>
             <label for="title" >{{ __('Title') }}</label>
-            <input id="title" class="block mt-1 w-full" type="text" name="title"  required autofocus />
+            <input id="title" class="block mt-1 w-full" type="text" name="title"  value="{{ $post->title }}" required autofocus />
         </div>
 
          <!-- Description -->
          <div>
             <label for="description" >{{ __('Description') }}</label>
-            <textarea id="description" rows="10" class="block mt-1 w-full"  name="description"  required autofocus></textarea>
+            <textarea id="description" rows="10" class="block mt-1 w-full"  name="description"  required autofocus>{{ $post->description }}</textarea>
         </div>
 
         <div class="flex items-center justify-end mt-4">
