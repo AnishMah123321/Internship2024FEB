@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Group;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class PostController extends Controller
 {
@@ -18,19 +20,48 @@ class PostController extends Controller
         ]);
     }
 
+    public function serversideview(Request $request){
+        if ($request->ajax()) {
+            $data = $this->model->all();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('title', function ($row) {
+                    return $row->title;
+                })
+                ->addColumn('description', function ($row) {
+                    return $row->description;
+                })
+                ->addColumn('action', function($row){
+                    $actionBtn = '';
+                    $actionBtn .= '<a href="" class="btn btn-primary mb-4">Edit</a>';
+                    $actionBtn .= '<span class="btn btn-danger mb-4 delete-button" data-id="">Delete</span>';
+                    $actionBtn .= '<a href="" class="btn btn-danger mb-">Add Comment</a>';
+                    return $actionBtn;
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
+        }
+        return view ('posts.serversidelist');
+    }
+
     public function create(){
-        return view ('posts.create');
+        return view ('posts.create',[
+            'groups' => Group::all(),
+        ]);
     }
     public function store(Request $request){
         $request->validate([
             'title' =>['required','min:5'],
             'description' =>['required','min:10'],
+            'groups' =>['required'],
         ]);
         try{
-            $this->model->create([
+            $postid = $this->model->create([
                 'title' => $request->title,
                 'description' => $request->description,
             ]);
+            $postid->groups()->sync($request->groups);
+
             return redirect()->route('post.view')->with('success', 'Post added successfully');
         }catch(\Exception $e){
             return redirect()->back()->withInput()->withErrors(['error' => 'There is an issue making post. Please contact admin']);
@@ -38,12 +69,13 @@ class PostController extends Controller
     }
 
     public function edit($postid){
-        $post = Post::find($postid);
+        $post = Post::find($postid)->with('groups');
         if(!$post){
             return redirect()->route('post.view')->with('error', 'Post not found');
         }
         return view('posts.edit',[
             'post' =>  $post,
+            'groups' => Group::all(),
         ]);
 
     }
@@ -61,7 +93,10 @@ class PostController extends Controller
         $post->update([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
+            'groups' =>['required'],
         ]);
+
+        $post->groups()->attach($request->groups);
 
         return redirect()->route('post.view')->with('success', 'Post edited successfully');
 

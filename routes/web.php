@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -37,7 +38,21 @@ Route::middleware('auth')->group(function () {
      Route::get('/admin/post/viewpost/{postid}', [PostController::class, 'viewpost'])->name('post.viewpost');
      Route::post('/admin/post/addComment', [PostController::class, 'commentStore'])->name('comment.store');
 
+
+     //server side datatable
+     Route::get('/admin/post/serversidelist', [PostController::class, 'serversideview'])->name('post.serversideview');
+
+
+
      //home
+     Route::post('/commentOnPost', [HomeController::class, 'commentOnPost'])->name('commentOnPost');
+
+
+     //group
+     Route::get('/admin/group/list', [GroupController::class, 'view'])->name('group.view');
+     Route::get('/admin/group/create', [GroupController::class, 'create'])->name('group.create');
+     Route::post('/admin/group/create', [GroupController::class, 'store'])->name('post.store');
+
 
 
 });
