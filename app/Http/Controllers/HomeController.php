@@ -24,7 +24,30 @@ class HomeController extends Controller
         $request->validate([
             'comment' =>['required'],
         ]);
-        print_r($request->comment);die();
+        try{
+            Comment::create([
+                'comment' => $request->comment,
+                'post_id' => $request->post,
+            ]);
+
+            $result = array(
+                'status' => true,
+                'message' => 'Comment Added'
+            );
+            return json_encode($result);
+        }catch(\Exception $e){
+            $result = array(
+                'status' => false,
+                'message' => 'Comment Failed'
+            );
+            return json_encode($result);
+        }
+    }
+
+    public function apicommentOnPost(Request $request){
+        $request->validate([
+            'comment' =>['required'],
+        ]);
         try{
             Comment::create([
                 'comment' => $request->comment,
@@ -32,7 +55,6 @@ class HomeController extends Controller
             ]);
             
         }catch(\Exception $e){
-            
         }
     }
 }
