@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -38,15 +38,11 @@ Route::middleware('auth')->group(function () {
      Route::get('/admin/post/viewpost/{postid}', [PostController::class, 'viewpost'])->name('post.viewpost');
      Route::post('/admin/post/addComment', [PostController::class, 'commentStore'])->name('comment.store');
 
-
      //server side datatable
      Route::get('/admin/post/serversidelist', [PostController::class, 'serversideview'])->name('post.serversideview');
 
-
-
      //home
      Route::post('/commentOnPost', [HomeController::class, 'commentOnPost'])->name('commentOnPost');
-
 
      //group
      Route::get('/admin/group/list', [GroupController::class, 'view'])->name('group.view');
