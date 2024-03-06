@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -9,6 +10,38 @@ use Illuminate\Support\Facades\Auth;
 
 class APIController extends Controller
 {
+
+    /**
+     * @OA\Get(
+     *      path="/api/post",
+     *      operationId="getPostDetails",
+     *      tags={"Post"},
+     *      summary="Get post details",
+     *      description="Returns detail of post",
+     *      security={{"bearer_token":{}}},
+     *      @OA\Response(response=200, description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                  @OA\Property(property="resCod", type="string", example="200"),
+     *                  @OA\Property(property="resDesc", type="string", example="Post details"),
+     *              )
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Error in input"
+     *         ),
+     *       @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *       ),
+     *       @OA\Response(
+     *          response=401,
+     *          description="Unauthorized"
+     *       ),
+     * )
+     */
     public function index()
     {
         $posts = Post::all();
@@ -69,6 +102,38 @@ class APIController extends Controller
             return response()->json(['status' => 422,'message' => 'Something went wrong ']);
         }
     }
+
+    /**
+     * @OA\Post(
+     *      path="/api/login",
+     *      operationId="loginUser",
+     *      tags={"Auth"},
+     *      summary="Login User",
+     *      description="Login User",
+     *      security={{"bearer_token":{}}},
+     *      @OA\RequestBody(
+     *          @OA\MediaType(mediaType="multipart/form-data",
+     *              @OA\Schema(
+     *                  @OA\Property(property="email", type="string"),
+     *                  @OA\Property(property="password", type="string"),
+     *             )
+     *         )
+     *      ),
+     *      @OA\Response(response=200, description="successful operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                  @OA\Property(property="resCod", type="string", example="200"),
+     *                  @OA\Property(property="resDesc", type="string", example="User Auth Token"),
+     *              )
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Error in input"
+     *         )
+     * )
+     */
 
     public function login(Request $request)
     {
